@@ -1,0 +1,304 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum VariantStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum CartStatus {
+  ACTIVE
+  CHECKED_OUT
+  ABANDONED
+}
+
+enum OrderStatus {
+  PENDING
+  PAID
+  PROCESSING
+  SHIPPED
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  RAZORPAY
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  REFUNDED
+}
+
+enum AddressType {
+  SHIPPING
+  BILLING
+}
+
+model Department {
+  id           String     @id @default(cuid())
+  slug         String     @unique
+  name         String
+  description  String
+  displayOrder Int        @default(0)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  categories   Category[]
+  products     Product[]
+
+  @@index([displayOrder])
+}
+
+model Category {
+  id           String        @id @default(cuid())
+  departmentId String
+  slug         String
+  name         String
+  description  String
+  displayOrder Int           @default(0)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  department   Department    @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  subcategories Subcategory[]
+  products     Product[]
+
+  @@unique([departmentId, slug])
+  @@index([displayOrder])
+}
+
+model Subcategory {
+  id           String    @id @default(cuid())
+  categoryId   String
+  slug         String
+  name         String
+  description  String
+  displayOrder Int       @default(0)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  category     Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  products     Product[]
+
+  @@unique([categoryId, slug])
+  @@index([displayOrder])
+}
+
+model Product {
+  id             String             @id @default(cuid())
+  externalId     String?            @unique
+  departmentId   String
+  categoryId     String
+  subcategoryId  String?
+  slug           String             @unique
+  name           String
+  description    String
+  pricePence     Int
+  salePricePence Int?
+  currency       String             @default("GBP")
+  status         ProductStatus      @default(ACTIVE)
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  department     Department         @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  category       Category           @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  subcategory    Subcategory?       @relation(fields: [subcategoryId], references: [id], onDelete: SetNull)
+  images         ProductImage[]
+  variants       ProductVariant[]
+  attributes     ProductAttribute[]
+  orderItems     OrderItem[]
+
+  @@index([departmentId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model ProductImage {
+  id           String   @id @default(cuid())
+  productId    String
+  url          String
+  altText      String
+  displayOrder Int      @default(0)
+  isPrimary    Boolean  @default(false)
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId, displayOrder])
+}
+
+model ProductAttribute {
+  id        String  @id @default(cuid())
+  productId String
+  key       String
+  value     String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, key])
+  @@index([key, value])
+}
+
+model ProductVariant {
+  id          String       @id @default(cuid())
+  productId   String
+  sku         String       @unique
+  size        String
+  colourName  String
+  colourHex   String?
+  status      VariantStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  product     Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  inventory   Inventory?
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+
+  @@index([productId])
+  @@index([size])
+  @@index([colourName])
+}
+
+model Inventory {
+  id               String         @id @default(cuid())
+  variantId        String         @unique
+  quantity         Int            @default(0)
+  reservedQuantity Int            @default(0)
+  updatedAt        DateTime       @updatedAt
+  variant          ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+}
+
+model Customer {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  phone        String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  addresses    Address[]
+  carts        Cart[]
+  orders       Order[]
+}
+
+model Address {
+  id          String      @id @default(cuid())
+  customerId  String
+  type        AddressType
+  label       String?
+  line1       String
+  line2       String?
+  city        String
+  county      String?
+  postcode    String
+  countryCode String      @default("GB")
+  isDefault   Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  customer    Customer    @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([customerId, isDefault])
+}
+
+model Cart {
+  id         String     @id @default(cuid())
+  customerId String?
+  guestId    String?
+  status     CartStatus @default(ACTIVE)
+  currency   String     @default("GBP")
+  expiresAt  DateTime?
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  customer   Customer?  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  items      CartItem[]
+
+  @@index([customerId])
+  @@index([guestId])
+  @@index([guestId, status])
+  @@index([status])
+}
+
+model CartItem {
+  id        String         @id @default(cuid())
+  cartId    String
+  variantId String
+  quantity  Int
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  cart      Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@unique([cartId, variantId])
+}
+
+model Order {
+  id                      String        @id @default(cuid())
+  customerId              String?
+  orderNumber             String        @unique
+  email                   String
+  status                  OrderStatus   @default(PENDING)
+  currency                String        @default("GBP")
+  subtotalPence           Int
+  discountPence           Int           @default(0)
+  shippingPence           Int           @default(0)
+  totalPence              Int
+  shippingAddressSnapshot Json
+  billingAddressSnapshot  Json?
+  createdAt               DateTime      @default(now())
+  updatedAt               DateTime      @updatedAt
+  customer                Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  items                   OrderItem[]
+  payments                Payment[]
+
+  @@index([customerId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id             String          @id @default(cuid())
+  orderId        String
+  productId      String?
+  variantId      String?
+  productName    String
+  sku            String
+  size           String
+  colourName     String
+  unitPricePence Int
+  quantity       Int
+  lineTotalPence Int
+  order          Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product        Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant        ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+}
+
+model Payment {
+  id                String          @id @default(cuid())
+  orderId           String
+  provider          PaymentProvider @default(RAZORPAY)
+  status            PaymentStatus   @default(PENDING)
+  amountPence       Int
+  currency          String          @default("GBP")
+  providerOrderId   String?
+  providerPaymentId String?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  order             Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([providerOrderId])
+  @@index([providerPaymentId])
+}

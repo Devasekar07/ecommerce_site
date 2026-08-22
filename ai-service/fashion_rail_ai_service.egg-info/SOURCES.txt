@@ -1,0 +1,12 @@
+pyproject.toml
+app/__init__.py
+app/main.py
+app/api/__init__.py
+app/api/health.py
+app/schemas/__init__.py
+app/services/__init__.py
+fashion_rail_ai_service.egg-info/PKG-INFO
+fashion_rail_ai_service.egg-info/SOURCES.txt
+fashion_rail_ai_service.egg-info/dependency_links.txt
+fashion_rail_ai_service.egg-info/requires.txt
+fashion_rail_ai_service.egg-info/top_level.txt

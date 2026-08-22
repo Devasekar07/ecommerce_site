@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Apparel placeholder</title>
+  <desc id="desc">A neutral local placeholder image for apparel products.</desc>
+  <rect width="800" height="1000" fill="#eef0f2"/>
+  <rect x="96" y="96" width="608" height="808" rx="16" fill="#fbfbf8"/>
+  <path d="M296 220h208l78 126-80 48-28-56v382H326V338l-28 56-80-48 78-126z" fill="#d7dde0"/>
+  <path d="M346 220c9 35 27 53 54 53s45-18 54-53" fill="none" stroke="#7b858b" stroke-width="20" stroke-linecap="round"/>
+  <path d="M326 460h148" stroke="#9aa3a8" stroke-width="16" stroke-linecap="round"/>
+  <path d="M326 524h112" stroke="#bac1c5" stroke-width="16" stroke-linecap="round"/>
+</svg>

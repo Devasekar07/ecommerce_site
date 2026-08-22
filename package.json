@@ -1,0 +1,23 @@
+{
+  "name": "fashion-rail",
+  "private": true,
+  "version": "0.1.0",
+  "description": "UK fashion e-commerce monorepo built with the RailCoding method.",
+  "workspaces": [
+    "frontend",
+    "api"
+  ],
+  "scripts": {
+    "dev:frontend": "npm run dev -w frontend",
+    "dev:api": "npm run dev -w api",
+    "build": "npm run build -w api && npm run build -w frontend",
+    "typecheck": "npm run typecheck -w api && npm run typecheck -w frontend",
+    "db:generate": "npm run prisma:generate -w api",
+    "db:migrate": "npm run prisma:migrate -w api",
+    "db:seed": "npm run prisma:seed -w api"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

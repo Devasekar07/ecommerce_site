@@ -1,4 +1,4 @@
-<img width="2172" height="724" alt="RC_Banner" src="https://github.com/user-attachments/assets/9e5de699-6750-4778-82ef-6a901a5f44b6" />
+
 
 **A structured way for non-coders to build software with AI coding agents.**
 

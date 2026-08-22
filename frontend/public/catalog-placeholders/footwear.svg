@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Footwear placeholder</title>
+  <desc id="desc">A neutral local placeholder image for footwear products.</desc>
+  <rect width="800" height="1000" fill="#eef0f2"/>
+  <rect x="96" y="96" width="608" height="808" rx="16" fill="#fbfbf8"/>
+  <path d="M216 602c75 28 150 42 226 42h138c38 0 68 30 68 68v18H190c-30 0-54-24-54-54v-56c0-24 25-40 47-31l33 13z" fill="#d7dde0"/>
+  <path d="M284 356h126c20 0 38 11 47 29l86 169c11 22-5 48-29 48H376c-45 0-82-37-82-82V356h-10z" fill="#c4ccd1"/>
+  <path d="M344 418h72" stroke="#7b858b" stroke-width="18" stroke-linecap="round"/>
+  <path d="M374 478h72" stroke="#7b858b" stroke-width="18" stroke-linecap="round"/>
+  <path d="M184 730h464" stroke="#7b858b" stroke-width="18" stroke-linecap="round"/>
+</svg>
