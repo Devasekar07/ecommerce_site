@@ -1,0 +1,31 @@
+# Private planning documents (per RailCoding method)
+dev/
+
+# Environment & secrets
+.env
+.env.*
+!.env.example
+
+# Node / frontend / API
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+
+# Python AI service
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Logs
+*.log
